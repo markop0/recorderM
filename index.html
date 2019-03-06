@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>recorder</title>
+		<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+
+		<style>
+			audio {
+				display: block;
+				margin-bottom: 10px;
+			}
+			
+			#audio-container {
+				padding: 20px 0;
+				
+			}
+			.cellAudio{display: flex;align-items: center;margin-bottom: 8px;}
+			.cellAudio>audio{margin: 0;}
+			.delRecorder{width: 60px;height: 32px;border-radius: 4px;border: none;background: #f56c6c;color: #fff;margin-left: 10px;}
+			
+			.ui-btn {
+				display: inline-block;
+				padding: 5px 20px;
+				font-size: 14px;
+				line-height: 1.428571429;
+				box-sizing: content-box;
+				text-align: center;
+				border: 1px solid #e8e8e8;
+				border-radius: 3px;
+				color: #555;
+				background-color: #fff;
+				border-color: #e8e8e8;
+				white-space: nowrap;
+				cursor: pointer;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+			
+			.ui-btn:hover,
+			.ui-btn.hover {
+				color: #333;
+				text-decoration: none;
+				background-color: #f8f8f8;
+				border: 1px solid #ddd;
+			}
+			
+			.ui-btn:focus,
+			.ui-btn:active {
+				color: #333;
+				outline: 0;
+			}
+			
+			.ui-btn.disabled,
+			.ui-btn.disabled:hover,
+			.ui-btn.disabled:active,
+			.ui-btn[disabled],
+			.ui-btn[disabled]:hover,
+			.ui-state-disabled .ui-btn {
+				cursor: not-allowed;
+				background-color: #eee;
+				border-color: #eee;
+				color: #aaa;
+			}
+			
+			.ui-btn-primary {
+				color: #fff;
+				background-color: #39b54a;
+				border-color: #39b54a;
+			}
+			
+			.ui-btn-primary:hover,
+			.ui-btn-primary.hover {
+				color: #fff;
+				background-color: #16a329;
+				border-color: #16a329;
+			}
+			
+			.ui-btn-primary:focus,
+			.ui-btn-primary:active {
+				color: #fff;
+			}
+			
+			.ui-btn-primary.disabled:focus {
+				color: #aaa;
+			}
+		</style>
+	</head>
+
+	<body>
+		<iframe frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=wangpengfei15975&repo=recorder.js&type=star&count=true"></iframe>
+		<h1>recorder</h1>
+		<h2>HTML5录音</h2>
+		<p>由于Chrome47以上以及QQ浏览器需要HTTPS的支持，所以烦请更换至360、FF、Edge进行体验，或下载项目至本地通过localhost访问。</p>
+		<p>另：IE和Safari全版本不支持录音功能</p>
+		<button id="start" class="ui-btn ui-btn-primary" disabled>录音</button>
+		<button id="stop" class="ui-btn ui-btn-primary" disabled>停止</button>
+
+		<div id="Countdown"></div>
+		
+		<div id="audio-container"></div>
+		<script src="js/recorder.js"></script>
+		<script>
+			window.onload = function() {
+				var start = document.querySelector('#start');
+				var stop = document.querySelector('#stop');
+				var container = document.querySelector('#audio-container');
+				var recorder = new Recorder({
+					sampleRate: 44100, //采样频率，默认为44100Hz(标准MP3采样率)
+					bitRate: 128, //比特率，默认为128kbps(标准MP3质量)
+					success: function() { //成功回调函数
+						start.disabled = false;
+					},
+					error: function(msg) { //失败回调函数
+						alert(msg);
+					},
+					fix: function(msg) { //不支持H5录音回调函数
+						alert(msg);
+					}
+				});
+
+				//开始录音
+				//recorder.start();
+
+				//停止录音
+				//recorder.stop();
+
+				//获取MP3编码的Blob格式音频文件
+				//recorder.getBlob(function(blob){ 获取成功回调函数，blob即为音频文件
+				//    ...
+				//},function(msg){ 获取失败回调函数，msg为错误信息
+				//    ...
+				//});
+
+				//getUserMedia() no longer works on insecure origins. To use this feature, you should consider switching your application to a secure origin, such as HTTPS.
+				var daojishiTime = 3;
+				var CdNumber 
+				var Countdown = document.getElementById('Countdown')
+
+				start.addEventListener('click', function() {
+					Countdown.innerText = "3秒后开始录音";
+					daojishi = setInterval(SetRemainTime1, 1000); //启动计时器，1秒执行一次
+					
+
+					this.disabled = true;
+					stop.disabled = false;
+					setTimeout(function() {
+
+						var audio = document.querySelectorAll('audio');
+						for(var i = 0; i < audio.length; i++) {
+							if(!audio[i].paused) {
+								audio[i].pause();
+							}
+						}
+						recorder.start();
+					}, 3000)
+				});
+
+				function SetRemainTime1() {
+					console.log(daojishiTime)
+					if(daojishiTime <= 0) {
+						daojishiTime--
+						var ccv = Math.abs(daojishiTime)
+						Countdown.innerText = "正在录音···" + ccv;
+					} else {
+						CdNumber = daojishiTime--;
+						if( CdNumber == 1){
+							Countdown.innerText = "正在录音···";
+						}else{
+							Countdown.innerText = daojishiTime + "秒后开始录音";
+						}
+					}
+				}
+				stop.addEventListener('click', function() {
+					Countdown.innerText = "";
+					clearInterval(daojishi); //停止计时器
+					daojishiTime = 3;
+					
+					this.disabled = true;
+					start.disabled = false;
+					recorder.stop();
+					recorder.getBlob(function(blob) {
+						var audio = document.createElement('audio');
+						audio.src = URL.createObjectURL(blob);//当前录音地址
+						audio.controls = true;
+						var ids = '<div class="cellAudio"><audio src="'+audio.src+'" controls=""></audio><button class="delRecorder    ">删除</button></div>' 
+						$('#audio-container').append(ids);
+					});
+				});
+
+				
+			};
+			$('html').on('click','.delRecorder',function(){
+				$(this).parent('.cellAudio').remove();
+			})
+		</script>
+	</body>
+
+</html>
