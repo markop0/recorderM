@@ -201,7 +201,7 @@
 						var audio = document.createElement('audio');
 						audio.src = URL.createObjectURL(blob);//当前录音地址
 						audio.controls = true;
-						var ids = '<div class="cellAudio"><audio src="'+audio.src+'" controls=""></audio><button class="delRecorder    ">删除</button></div>' 
+						var ids = '<div class="cellAudio"><audio class="nowAudio" src="'+audio.src+'" controls=""></audio><button class="delRecorder    ">删除</button></div>' 
 						$('#audio-container').append(ids);
 					});
 				});
