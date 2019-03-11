@@ -113,12 +113,13 @@
 		<button id="start" class="ui-btn ui-btn-primary" disabled>录音</button>
 		<button id="stop" class="ui-btn ui-btn-primary" disabled>停止</button>
 		<div id="Countdown"></div><button class="saveRecorder" onclick="recdown('randomkey0')">save</button>
-
+    	<button onclick="funUpload(this);" id="btnUpload" >上传</button>
 		<div id="Countdown"></div>
 		
 		<div id="audio-container"></div>
 		<script src="js/recorder.js"></script>
 		<script>
+		var mp3Blob;
 			window.onload = function() {
 				var start = document.querySelector('#start');
 				var stop = document.querySelector('#stop');
@@ -198,6 +199,7 @@
 					start.disabled = false;
 					recorder.stop();
 					recorder.getBlob(function(blob) {
+						mp3Blob = blob;
 						var audio = document.createElement('audio');
 						audio.src = URL.createObjectURL(blob);//当前录音地址
 						audio.controls = true;
@@ -224,21 +226,24 @@
 				console.log(blob); 
 				var linkhref = URL.createObjectURL(blob);
 				blobToDataURL(blob);
-//				var o = recblob[key];
-//				if(o) {
-//					var cls = RandomKey(16);
-//					var name = "rec-" + o.time + "ms-" + o.set.bitRate + "kbps-" + o.set.sampleRate + "hz." + o.set.type;
-//
-//					o.down = (o.down || 0) + 1;
-//					$(".d" + key).html('<span style="color:red">' + o.down + '</span> <span class="' + cls + '"> 没弹下载？试一下链接或复制文本<button onclick="recdown64(\'' + key + '\',\'' + cls + '\')">生成Base64文本</button></span>');
-//
-//					var downA = document.createElement("A");
-//					downA.innerHTML = "下载 " + name;
-//					downA.href = URL.createObjectURL(o.blob);
-//					downA.download = name;
-//					$("." + cls).prepend(downA);
-//					downA.click();
-//				};
+				
+			function funUpload() {
+				var fd = new FormData();
+				var mp3Name = encodeURIComponent('audio_recording_' + new Date().getTime() + '.mp3');
+				fd.append('mp3Name', mp3Name);
+				fd.append('file', mp3Blob);
+
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState == 4 && xhr.status == 200) {
+						recordingslist.innerHTML += '上传成功：<a href="' + xhr.responseText + '" target="_blank">' + mp3Name + '</a>';
+					}
+				};
+
+				xhr.open('POST', 'upload.ashx'); //
+				xhr.send(fd);
+				console.log(mp3Blob);
+			}
 			};
 		</script>
 	</body>
