@@ -227,6 +227,8 @@
 				var linkhref = URL.createObjectURL(blob);
 				blobToDataURL(blob);
 				
+			
+			};
 			function funUpload() {
 				var fd = new FormData();
 				var mp3Name = encodeURIComponent('audio_recording_' + new Date().getTime() + '.mp3');
@@ -244,7 +246,6 @@
 				xhr.send(fd);
 				console.log(mp3Blob);
 			}
-			};
 		</script>
 	</body>
 
