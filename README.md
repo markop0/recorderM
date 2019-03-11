@@ -1,4 +1,4 @@
-# recorder.js
+# recorderM
 :microphone:基于HTML5的录音功能，输出格式为mp3文件。  
 ## 前言
 完全依赖H5原生API  
